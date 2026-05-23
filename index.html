@@ -1,179 +1,1342 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mohamed Sabri - Portfolio</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POO Java — Devoir 2024–2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #2a2a3a;
+    --accent: #f0c040;
+    --accent2: #5b8fff;
+    --accent3: #ff6b6b;
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --code-bg: #0d0d14;
+    --keyword: #ff79c6;
+    --type: #8be9fd;
+    --string: #f1fa8c;
+    --comment: #6272a4;
+    --number: #bd93f9;
+    --method: #50fa7b;
+    --annotation: #ffb86c;
+  }
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 6vw 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 30%, rgba(91,143,255,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 70%, rgba(240,192,64,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 5px 14px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    width: fit-content;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .hero h1 span { color: var(--accent); }
+
+  .hero-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 20px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .pillars {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .pillar-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    padding: 6px 16px;
+    border-radius: 2px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .pillar-tag.enc { background: rgba(240,192,64,0.15); color: var(--accent); border: 1px solid rgba(240,192,64,0.3); }
+  .pillar-tag.her { background: rgba(91,143,255,0.15); color: var(--accent2); border: 1px solid rgba(91,143,255,0.3); }
+  .pillar-tag.pol { background: rgba(255,107,107,0.15); color: var(--accent3); border: 1px solid rgba(255,107,107,0.3); }
+  .pillar-tag.abs { background: rgba(80,250,123,0.1); color: #50fa7b; border: 1px solid rgba(80,250,123,0.25); }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    left: 6vw;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+
+  .scroll-line {
+    width: 40px;
+    height: 1px;
+    background: var(--muted);
+    animation: scrollLine 2s 1s ease-in-out infinite;
+  }
+
+  /* NAV */
+  .toc {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 6vw;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .toc::-webkit-scrollbar { display: none; }
+
+  .toc a {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 16px 18px;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .toc a:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+  /* MAIN LAYOUT */
+  main {
+    padding: 0 6vw 100px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* SECTION HEADERS */
+  .part-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin: 80px 0 40px;
+  }
+
+  .part-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+  }
+
+  .part-line { flex: 1; height: 1px; background: var(--border); }
+
+  .part-title {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  /* QUESTION CARDS */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 48px;
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+
+  .question-card:hover { border-color: rgba(240,192,64,0.3); }
+
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .q-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--bg);
+    background: var(--accent);
+    padding: 4px 10px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+
+  .q-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    flex: 1;
+  }
+
+  .q-toggle {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    transition: transform 0.3s;
+  }
+
+  .q-toggle.open { transform: rotate(45deg); }
+
+  .q-body {
+    display: none;
+    padding: 28px;
+  }
+
+  .q-body.open { display: block; }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+
+  .tab-btn {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* PROSE */
+  .prose h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 20px 0 8px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .prose p { color: var(--muted); font-size: 0.95rem; margin-bottom: 14px; line-height: 1.75; }
+  .prose p strong { color: var(--text); }
+
+  .definition-box {
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    background: rgba(240,192,64,0.05);
+    border-radius: 0 4px 4px 0;
+    margin: 16px 0;
+  }
+
+  .definition-box p { margin: 0; font-size: 0.9rem; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 16px 0;
+  }
+
+  .info-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 14px;
+  }
+
+  .info-item .label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .info-item .value { font-size: 0.88rem; color: var(--text); }
+
+  /* CODE BLOCKS */
+  .code-wrap {
+    position: relative;
+    margin: 16px 0;
+  }
+
+  .code-lang {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    pointer-events: none;
+  }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 56px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    background: var(--border);
+    border: none;
+    padding: 4px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .copy-btn:hover { color: var(--accent); background: rgba(240,192,64,0.1); }
+
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 20px 18px 18px;
+    overflow-x: auto;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.78rem;
+    line-height: 1.7;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .kw { color: var(--keyword); }
+  .ty { color: var(--type); }
+  .st { color: var(--string); }
+  .cm { color: var(--comment); font-style: italic; }
+  .nm { color: var(--number); }
+  .mt { color: var(--method); }
+  .an { color: var(--annotation); }
+  .pl { color: var(--text); }
+
+  /* DIAGRAM */
+  .diagram {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    margin: 16px 0;
+    text-align: center;
+  }
+
+  .uml-class {
+    display: inline-block;
+    border: 1px solid var(--accent2);
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 180px;
+    text-align: left;
+    vertical-align: top;
+    margin: 8px;
+  }
+
+  .uml-class.abstract-cls { border-color: var(--accent3); }
+
+  .uml-header {
+    background: rgba(91,143,255,0.15);
+    padding: 8px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .abstract-cls .uml-header { background: rgba(255,107,107,0.12); }
+
+  .uml-section {
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .uml-section:last-child { border-bottom: none; }
+
+  .uml-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--muted);
+    padding: 2px 0;
+  }
+
+  .uml-item.pub { color: var(--method); }
+  .uml-item.priv { color: var(--accent3); }
+  .uml-item.abstr { color: var(--accent); font-style: italic; }
+
+  .uml-arrow {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--accent2);
+    vertical-align: middle;
+    margin: 0 8px;
+    padding-top: 20px;
+  }
+
+  /* KEYWORD CHIPS */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0; }
+
+  .chip {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    padding: 5px 12px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    color: var(--type);
+    background: rgba(139,233,253,0.05);
+  }
+
+  /* COMPARISON TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 14px 0;
+  }
+
+  th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--accent);
+    background: var(--code-bg);
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    vertical-align: top;
+  }
+
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  td strong { color: var(--text); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 6vw;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes scrollLine {
+    0%, 100% { width: 40px; opacity: 1; }
+    50% { width: 60px; opacity: 0.5; }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li> 
-                <li><a href="#projects">Projects</a></li> 
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <section id="hero">
-        <div class="hero-content">
-            <h1 class="fade-in">Welcome to My Portfolio</h1>
-            <p class="fade-in">I'm Mohamed Sabri, a Backend Developer specializing</p>
-            <a href="#projects" class="btn fade-in">View My Work</a>
-        </div>
-    </section>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Devoir Libre · POO Java · 2024–2025</div>
+  <h1>Programmation<br>Orientée <span>Objet</span><br>avec Java</h1>
+  <p class="hero-sub">// 7 questions · 3 parties · réponses complètes avec code</p>
+  <div class="pillars">
+    <span class="pillar-tag enc">Encapsulation</span>
+    <span class="pillar-tag her">Héritage</span>
+    <span class="pillar-tag pol">Polymorphisme</span>
+    <span class="pillar-tag abs">Abstraction</span>
+  </div>
+  <div class="scroll-hint"><span class="scroll-line"></span> défiler pour explorer</div>
+</section>
 
-    <section id="about">
-        <h2>About Me</h2>
-        <p>
-            I am a dedicated developer specializing in system programming and backend development. 
-            With a passion for continuous learning, I strive to enhance my skills and build efficient, 
-            high-performance applications. My objective is to design scalable and reliable systems that 
-            effectively address real-world challenges. Whether optimizing performance, minimizing resource 
-            consumption, or solving complex problems, I am committed to delivering solutions that make a 
-            meaningful impact.
-        </p>
-    </section>
+<!-- NAV -->
+<nav class="toc">
+  <a href="#part1">PARTIE I — Encapsulation</a>
+  <a href="#q1">Q1 Classes</a>
+  <a href="#q2">Q2 Encapsulation</a>
+  <a href="#q3">Q3 Surcharge</a>
+  <a href="#part2">PARTIE II — Héritage</a>
+  <a href="#q4">Q4 Héritage</a>
+  <a href="#q5">Q5 Polymorphisme</a>
+  <a href="#part3">PARTIE III — Interfaces</a>
+  <a href="#q6">Q6 Interfaces</a>
+  <a href="#q7">Q7 Lambdas</a>
+</nav>
 
-    <section id="skills">
-        <h2>Skills</h2>
-        <div class="skills-container">
-            <div class="skill"><i class="fab fa-python"></i> Python</div>
-            <div class="skill"><i class="fab fa-golang"></i> Go</div>
-            <div class="skill"><i class="fab fa-rust"></i> Rust</div>
-            <div class="skill"><i class="fas fa-database"></i> PostgreSQL</div>
-            <div class="skill"><i class="fas fa-database"></i> MySQL</div>
-            <div class="skill"><i class="fab fa-django"></i> Django</div>
-            <div class="skill"><i class="fab fa-golang"></i> Gin</div>
-            <div class="skill">
-                <i class="fa fa-cog"></i>
-                <span>REST API</span>
-            </div>
-        </div>
-    </section>
-    
-    
-    </section>
+<main>
 
-    <section id="projects"> 
-        <h2>Projects</h2>
-        <div class="project">
-            <h3>GoAuth</h3>
-            <p>A high-performance authentication service built with Go, leveraging the Gin framework for efficient HTTP routing, GORM for database interactions, and bcrypt for secure password hashing. GoAuth offers secure user registration and login functionalities with Docker for easy deployment.</p>
-            <a href="https://github.com/Sabri-Simo/goAuth" class="btn">View Project</a>
-        </div>
-        <div class="project">
-            <h3>E-Commerce Store</h3>
-            <p>An e-commerce application that allows users to browse, add, and manage products in their shopping carts. Built with Django for the backend, Alpine.js for interactive elements, and Tailwind CSS for styling. The project is containerized using Docker for easy setup and deployment.</p>
-            <h4>Features:</h4>
-            <ul>
-                <li>User registration and login</li>
-                <li>Product catalog</li>
-                <li>Cart management</li>
-                <li>Checkout process (optional)</li>
-                <li>Admin panel for managing products and users</li>
-            </ul>
-            <h4>Technologies:</h4>
-            <p>Django, Alpine.js, Tailwind CSS, Docker</p>
-            <a href="https://github.com/Sabri-Simo/django" target="_blank" class="btn">View Project on GitHub</a>
-        </div>
-    </section>
+<!-- ===== PARTIE I ===== -->
+<div class="part-header" id="part1">
+  <span class="part-num">PARTIE I</span>
+  <div class="part-line"></div>
+  <h2 class="part-title">Classes, Objets &amp; Encapsulation</h2>
+</div>
 
-    <section id="education">
-        <h2>Education</h2>
-        <div class="certificate">
-            <h3>Meta Backend Developer</h3>
-            <p>Issuing Organization: Meta</p>
-            <p>Date of Completion: 2024</p>
-            <p>Meta Back-End Developer Professional Certificate</p>
-            <a href="https://www.coursera.org/account/accomplishments/specialization/AXP8UP9LJM9U" target="_blank" class="btn">View Certificate</a>
-        </div>
-        <div class="education-details">
-            <h3>BAC+2 in Development Informatique</h3>
-            <p>Cesa Sup</p>
-            <p>Date of Graduation: 2022-2024</p>
-        </div>
-    </section>
-    
-    <section id="contact">
-        <h2>Contact Me</h2>
-        <div class="contact-container">
-            <form id="my-form" action="https://formspree.io/f/mldeberb" method="POST">
-                <label>Email:</label>
-                <input type="email" name="email" />
-                <label>Message:</label>
-                <input type="text" name="message" />
-                <button id="my-form-button">Submit</button>
-                <p id="my-form-status"></p>
-            </form>
-        </div>
-    </section>
-    
-    <footer>
-        <div class="footer-container">
-            <div class="footer-content">
-                <h3>Contact Me</h3>
-                <p>Email: <a href="mailto:sabri.cloud.c@gmail.com">sabri.cloud.c@gmail.com</a></p>
-                <p>Phone: <a href="tel:0780788281">0780788281</a></p>
-            </div>
-            <div class="footer-social">
-                <h3>Connect with Me</h3>
-                <a href="https://www.linkedin.com/in/simo-sabri-42402129a/" target="_blank">LinkedIn</a>
-                <a href="https://github.com/Sabri-Simo" target="_blank">GitHub</a>
-            </div>
-            <div class="footer-about">
-                <h3>About Me</h3>
-                <p>I am a backend developer with a passion for creating efficient and scalable applications. Let's connect and build something great together!</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 Mohamed Sabri. All rights reserved.</p>
-        </div>
-    </footer>
+<!-- Q1 -->
+<div class="question-card" id="q1">
+  <div class="q-header" onclick="toggleQ(this)">
+    <span class="q-num">Q1</span>
+    <span class="q-title">Déclaration et structure d'une classe</span>
+    <span class="q-toggle">+</span>
+  </div>
+  <div class="q-body open">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'doc-q1')">Documentation</button>
+      <button class="tab-btn" onclick="switchTab(this,'ex-q1')">Exemple</button>
+    </div>
 
-    <script src="script.js"></script>
-</body>
-<script>
-    var form = document.getElementById("my-form");
-    
-    async function handleSubmit(event) {
-      event.preventDefault();
-      var status = document.getElementById("my-form-status");
-      var data = new FormData(event.target);
-      fetch(event.target.action, {
-        method: form.method,
-        body: data,
-        headers: {
-            'Accept': 'application/json'
-        }
-      }).then(response => {
-        if (response.ok) {
-          status.innerHTML = "Thanks for your submission!";
-          form.reset()
-        } else {
-          response.json().then(data => {
-            if (Object.hasOwn(data, 'errors')) {
-              status.innerHTML = data["errors"].map(error => error["message"]).join(", ")
-            } else {
-              status.innerHTML = "Oops! There was a problem submitting your form"
-            }
-          })
-        }
-      }).catch(error => {
-        status.innerHTML = "Oops! There was a problem submitting your form"
-      });
+    <div class="tab-pane active" id="doc-q1">
+      <div class="prose">
+        <div class="definition-box">
+          <p>Une <strong>classe</strong> est un modèle (blueprint) qui définit la structure et le comportement d'un objet. En Java, tout code existe à l'intérieur d'une classe. Un <strong>objet</strong> est une instance concrète de cette classe, créée avec <code style="color:var(--type);font-family:'Space Mono',monospace">new</code>.</p>
+        </div>
+
+        <h3>Composants principaux</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="label">Attributs (champs)</div>
+            <div class="value">Variables qui stockent l'état d'un objet. Déclarés dans le corps de la classe.</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Constructeur</div>
+            <div class="value">Méthode spéciale du même nom que la classe, appelée lors de la création d'une instance.</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Méthodes</div>
+            <div class="value">Fonctions qui définissent le comportement de l'objet (actions, calculs).</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Modificateurs d'accès</div>
+            <div class="value"><code style="color:var(--keyword);font-family:'Space Mono',monospace">public</code> · <code style="color:var(--keyword);font-family:'Space Mono',monospace">private</code> · <code style="color:var(--keyword);font-family:'Space Mono',monospace">protected</code> · (défaut)</div>
+          </div>
+        </div>
+
+        <h3>Classe vs Objet — Analogie</h3>
+        <p>La classe <strong>Voiture</strong> est le plan de construction. Chaque voiture concrète (ex. "ma Peugeot 208 rouge") est une instance (objet). Toutes partagent la même structure, mais des valeurs d'attributs différentes.</p>
+
+        <table>
+          <thead><tr><th>Modificateur</th><th>Même classe</th><th>Même package</th><th>Sous-classe</th><th>Partout</th></tr></thead>
+          <tbody>
+            <tr><td><strong>public</strong></td><td>✓</td><td>✓</td><td>✓</td><td>✓</td></tr>
+            <tr><td><strong>protected</strong></td><td>✓</td><td>✓</td><td>✓</td><td>✗</td></tr>
+            <tr><td><strong>(défaut)</strong></td><td>✓</td><td>✓</td><td>✗</td><td>✗</td></tr>
+            <tr><td><strong>private</strong></td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="ex-q1">
+      <div class="code-wrap">
+        <span class="code-lang">JAVA</span>
+        <button class="copy-btn" onclick="copyCode(this)">COPIER</button>
+        <pre><code><span class="cm">/**
+ * Représente un livre dans une bibliothèque.
+ * Domaine métier : Bibliothèque.
+ */</span>
+<span class="kw">public class</span> <span class="ty">Livre</span> {
+
+    <span class="cm">// Attributs privés (3 types variés)</span>
+    <span class="kw">private</span> <span class="ty">String</span>  titre;
+    <span class="kw">private</span> <span class="ty">String</span>  auteur;
+    <span class="kw">private</span> <span class="ty">int</span>     anneePublication;
+    <span class="kw">private</span> <span class="ty">double</span>  prix;
+    <span class="kw">private</span> <span class="ty">boolean</span> disponible;
+
+    <span class="cm">/**
+     * Constructeur paramétré complet.
+     *
+     * @param titre            Titre du livre
+     * @param auteur           Auteur principal
+     * @param anneePublication Année d'édition
+     * @param prix             Prix en euros (≥ 0)
+     */</span>
+    <span class="kw">public</span> <span class="mt">Livre</span>(<span class="ty">String</span> titre, <span class="ty">String</span> auteur,
+                 <span class="ty">int</span> anneePublication, <span class="ty">double</span> prix) {
+        <span class="kw">this</span>.titre            = titre;
+        <span class="kw">this</span>.auteur           = auteur;
+        <span class="kw">this</span>.anneePublication = anneePublication;
+        <span class="kw">this</span>.prix             = prix;
+        <span class="kw">this</span>.disponible       = <span class="kw">true</span>;
     }
-    form.addEventListener("submit", handleSubmit);
 
+    <span class="cm">/**
+     * Retourne une représentation textuelle du livre.
+     *
+     * @return chaîne décrivant l'objet
+     */</span>
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">toString</span>() {
+        <span class="kw">return</span> <span class="st">"[Livre] "</span> + titre + <span class="st">" — "</span> + auteur
+             + <span class="st">" ("</span> + anneePublication + <span class="st">") | Prix: "</span>
+             + prix + <span class="st">"€ | Disponible: "</span> + disponible;
+    }
 
+    <span class="cm">// Getters basiques</span>
+    <span class="kw">public</span> <span class="ty">String</span>  <span class="mt">getTitre</span>()            { <span class="kw">return</span> titre; }
+    <span class="kw">public</span> <span class="ty">String</span>  <span class="mt">getAuteur</span>()           { <span class="kw">return</span> auteur; }
+    <span class="kw">public</span> <span class="ty">int</span>     <span class="mt">getAnneePublication</span>() { <span class="kw">return</span> anneePublication; }
+    <span class="kw">public</span> <span class="ty">double</span>  <span class="mt">getPrix</span>()             { <span class="kw">return</span> prix; }
+    <span class="kw">public</span> <span class="ty">boolean</span> <span class="mt">isDisponible</span>()        { <span class="kw">return</span> disponible; }
 
+    <span class="cm">// Exemple d'utilisation</span>
+    <span class="kw">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">Livre</span> l = <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"L'Étranger"</span>, <span class="st">"Albert Camus"</span>, <span class="nm">1942</span>, <span class="nm">8.50</span>);
+        <span class="ty">System</span>.out.<span class="mt">println</span>(l);
+    }
+}</code></pre>
+      </div>
+      <p class="prose" style="margin-top:10px"><strong>Sortie :</strong> <code style="font-family:'Space Mono',monospace;color:var(--string);font-size:0.8rem">[Livre] L'Étranger — Albert Camus (1942) | Prix: 8.5€ | Disponible: true</code></p>
+    </div>
+  </div>
+</div>
+
+<!-- Q2 -->
+<div class="question-card" id="q2">
+  <div class="q-header" onclick="toggleQ(this)">
+    <span class="q-num">Q2</span>
+    <span class="q-title">Encapsulation et accesseurs</span>
+    <span class="q-toggle">+</span>
+  </div>
+  <div class="q-body open">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'doc-q2')">Documentation</button>
+      <button class="tab-btn" onclick="switchTab(this,'ex-q2')">Exemple</button>
+    </div>
+
+    <div class="tab-pane active" id="doc-q2">
+      <div class="prose">
+        <div class="definition-box">
+          <p><strong>L'encapsulation</strong> consiste à regrouper données (attributs) et comportements (méthodes) dans une même unité, et à contrôler l'accès extérieur via des modificateurs de visibilité.</p>
+        </div>
+
+        <h3>Pourquoi private + getters/setters ?</h3>
+        <p>Déclarer un attribut <strong>private</strong> empêche toute modification directe depuis l'extérieur de la classe. Les <strong>getters</strong> exposent la valeur en lecture seule ; les <strong>setters</strong> permettent une écriture contrôlée.</p>
+        <p>Un setter peut contenir une <strong>validation</strong> : refuser une valeur négative pour un prix, ou une chaîne vide pour un nom. Cela garantit l'<em>intégrité de l'état</em> de l'objet à tout moment.</p>
+
+        <div class="chips">
+          <span class="chip">Intégrité des données</span>
+          <span class="chip">Couplage faible</span>
+          <span class="chip">Maintenance facilitée</span>
+          <span class="chip">Évolution sans casser l'API</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="ex-q2">
+      <div class="code-wrap">
+        <span class="code-lang">JAVA</span>
+        <button class="copy-btn" onclick="copyCode(this)">COPIER</button>
+        <pre><code><span class="cm">// Ajout à la classe Livre (Question 1)</span>
+
+<span class="cm">/**
+ * Modifie le prix du livre avec validation.
+ * @param prix Nouveau prix (doit être positif)
+ */</span>
+<span class="kw">public void</span> <span class="mt">setPrix</span>(<span class="ty">double</span> prix) {
+    <span class="kw">if</span> (prix &lt; <span class="nm">0</span>) {
+        <span class="ty">System</span>.err.<span class="mt">println</span>(
+            <span class="st">"[ERREUR] setPrix : le prix ne peut pas être négatif ("</span>
+            + prix + <span class="st">")."</span>
+        );
+        <span class="kw">return</span>; <span class="cm">// on ne modifie PAS l'attribut</span>
+    }
+    <span class="kw">this</span>.prix = prix;
+}
+
+<span class="kw">public void</span> <span class="mt">setTitre</span>(<span class="ty">String</span> titre) {
+    <span class="kw">if</span> (titre == <span class="kw">null</span> || titre.<span class="mt">isBlank</span>()) {
+        <span class="ty">System</span>.err.<span class="mt">println</span>(<span class="st">"[ERREUR] setTitre : le titre ne peut pas être vide."</span>);
+        <span class="kw">return</span>;
+    }
+    <span class="kw">this</span>.titre = titre;
+}
+
+<span class="cm">// ─── Programme main ───────────────────────────────────────────</span>
+<span class="kw">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+    <span class="ty">Livre</span> l = <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"1984"</span>, <span class="st">"George Orwell"</span>, <span class="nm">1949</span>, <span class="nm">9.99</span>);
+
+    <span class="cm">// Appel avec valeur invalide → affiche l'erreur, prix inchangé</span>
+    l.<span class="mt">setPrix</span>(-<span class="nm">5.0</span>);
+    <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Prix actuel : "</span> + l.<span class="mt">getPrix</span>());  <span class="cm">// 9.99</span>
+
+    <span class="cm">// Titre vide → erreur</span>
+    l.<span class="mt">setTitre</span>(<span class="st">""</span>);
+    <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Titre actuel : "</span> + l.<span class="mt">getTitre</span>()); <span class="cm">// 1984</span>
+
+    <span class="cm">// Valeur valide → mise à jour</span>
+    l.<span class="mt">setPrix</span>(<span class="nm">12.50</span>);
+    <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"Nouveau prix : "</span> + l.<span class="mt">getPrix</span>()); <span class="cm">// 12.5</span>
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q3 -->
+<div class="question-card" id="q3">
+  <div class="q-header" onclick="toggleQ(this)">
+    <span class="q-num">Q3</span>
+    <span class="q-title">Surcharge de constructeurs</span>
+    <span class="q-toggle">+</span>
+  </div>
+  <div class="q-body open">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'doc-q3')">Documentation</button>
+      <button class="tab-btn" onclick="switchTab(this,'ex-q3')">Exemple</button>
+    </div>
+
+    <div class="tab-pane active" id="doc-q3">
+      <div class="prose">
+        <table>
+          <thead><tr><th>Concept</th><th>Surcharge (Overloading)</th><th>Redéfinition (Overriding)</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Portée</strong></td><td>Même classe</td><td>Sous-classe</td></tr>
+            <tr><td><strong>Signature</strong></td><td>Nom identique, params différents</td><td>Signature identique</td></tr>
+            <tr><td><strong>Résolution</strong></td><td>Compile-time (statique)</td><td>Runtime (dynamique)</td></tr>
+            <tr><td><strong>Annotation</strong></td><td>Aucune requise</td><td><code style="color:var(--annotation)">@Override</code></td></tr>
+          </tbody>
+        </table>
+
+        <h3>Mot-clé <code style="color:var(--keyword);font-family:'Space Mono',monospace">this()</code></h3>
+        <p>Dans un constructeur, <strong><code style="color:var(--keyword);font-family:'Space Mono',monospace">this(...)</code></strong> appelle un autre constructeur de la <em>même classe</em>. Cela évite la duplication de code d'initialisation. L'appel doit toujours être la <strong>première instruction</strong> du constructeur.</p>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="ex-q3">
+      <div class="code-wrap">
+        <span class="code-lang">JAVA</span>
+        <button class="copy-btn" onclick="copyCode(this)">COPIER</button>
+        <pre><code><span class="kw">public class</span> <span class="ty">Rectangle</span> {
+
+    <span class="kw">private</span> <span class="ty">double</span> largeur;
+    <span class="kw">private</span> <span class="ty">double</span> hauteur;
+
+    <span class="cm">/** Constructeur par défaut : carré de côté 1 */</span>
+    <span class="kw">public</span> <span class="mt">Rectangle</span>() {
+        <span class="kw">this</span>(<span class="nm">1.0</span>); <span class="cm">// → appelle Rectangle(double)</span>
+    }
+
+    <span class="cm">/** Constructeur à un paramètre : carré de côté donné */</span>
+    <span class="kw">public</span> <span class="mt">Rectangle</span>(<span class="ty">double</span> cote) {
+        <span class="kw">this</span>(cote, cote); <span class="cm">// → appelle Rectangle(double, double)</span>
+    }
+
+    <span class="cm">/** Constructeur complet : largeur × hauteur */</span>
+    <span class="kw">public</span> <span class="mt">Rectangle</span>(<span class="ty">double</span> largeur, <span class="ty">double</span> hauteur) {
+        <span class="kw">this</span>.largeur = largeur;
+        <span class="kw">this</span>.hauteur = hauteur;
+    }
+
+    <span class="kw">public double</span> <span class="mt">surface</span>()   { <span class="kw">return</span> largeur * hauteur; }
+    <span class="kw">public double</span> <span class="mt">perimetre</span>() { <span class="kw">return</span> <span class="nm">2</span> * (largeur + hauteur); }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">toString</span>() {
+        <span class="kw">return</span> <span class="st">"Rectangle("</span> + largeur + <span class="st">"×"</span> + hauteur
+             + <span class="st">") | Surface="</span>  + <span class="mt">surface</span>()
+             + <span class="st">" | Périmètre="</span> + <span class="mt">perimetre</span>();
+    }
+
+    <span class="kw">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+        <span class="ty">Rectangle</span> r1 = <span class="kw">new</span> <span class="ty">Rectangle</span>();          <span class="cm">// 1×1</span>
+        <span class="ty">Rectangle</span> r2 = <span class="kw">new</span> <span class="ty">Rectangle</span>(<span class="nm">5</span>);         <span class="cm">// 5×5</span>
+        <span class="ty">Rectangle</span> r3 = <span class="kw">new</span> <span class="ty">Rectangle</span>(<span class="nm">4</span>, <span class="nm">7</span>);     <span class="cm">// 4×7</span>
+
+        <span class="ty">System</span>.out.<span class="mt">println</span>(r1);
+        <span class="ty">System</span>.out.<span class="mt">println</span>(r2);
+        <span class="ty">System</span>.out.<span class="mt">println</span>(r3);
+    }
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PARTIE II ===== -->
+<div class="part-header" id="part2">
+  <span class="part-num">PARTIE II</span>
+  <div class="part-line"></div>
+  <h2 class="part-title">Héritage &amp; Polymorphisme</h2>
+</div>
+
+<!-- Q4 -->
+<div class="question-card" id="q4">
+  <div class="q-header" onclick="toggleQ(this)">
+    <span class="q-num">Q4</span>
+    <span class="q-title">Héritage simple</span>
+    <span class="q-toggle">+</span>
+  </div>
+  <div class="q-body open">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'doc-q4')">Documentation</button>
+      <button class="tab-btn" onclick="switchTab(this,'dia-q4')">Diagramme UML</button>
+      <button class="tab-btn" onclick="switchTab(this,'ex-q4')">Exemple</button>
+    </div>
+
+    <div class="tab-pane active" id="doc-q4">
+      <div class="prose">
+        <div class="definition-box">
+          <p>L'<strong>héritage</strong> permet à une classe (fille / sous-classe) de réutiliser la structure et le comportement d'une autre classe (mère / super-classe), tout en les étendant ou les modifiant.</p>
+        </div>
+
+        <div class="chips">
+          <span class="chip">extends</span>
+          <span class="chip">super()</span>
+          <span class="chip">super.methode()</span>
+          <span class="chip">final</span>
+          <span class="chip">instanceof</span>
+        </div>
+
+        <h3>Règles de visibilité héritées</h3>
+        <p>Les membres <strong>public</strong> et <strong>protected</strong> de la classe mère sont hérités. Les membres <strong>private</strong> ne sont PAS accessibles directement dans la sous-classe (il faut passer par des getters). Les membres <em>package-private</em> sont hérités si la sous-classe est dans le même package.</p>
+
+        <h3>Classe <code style="color:var(--keyword);font-family:'Space Mono',monospace">final</code></h3>
+        <p>Une classe déclarée <strong>final</strong> ne peut pas être étendue (ex. <code style="color:var(--type);font-family:'Space Mono',monospace">String</code>, <code style="color:var(--type);font-family:'Space Mono',monospace">Integer</code>). Une méthode <strong>final</strong> ne peut pas être redéfinie dans une sous-classe.</p>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="dia-q4">
+      <div class="diagram">
+        <div class="uml-class abstract-cls">
+          <div class="uml-header">«abstract» Animal</div>
+          <div class="uml-section">
+            <div class="uml-item priv">− nom : String</div>
+            <div class="uml-item priv">− age : int</div>
+          </div>
+          <div class="uml-section">
+            <div class="uml-item pub">+ Animal(nom, age)</div>
+            <div class="uml-item pub">+ manger() : void</div>
+            <div class="uml-item abstr">+ parler() : String «abstract»</div>
+            <div class="uml-item pub">+ toString() : String</div>
+          </div>
+        </div>
+
+        <span class="uml-arrow">▲─────▲</span>
+
+        <div style="display:inline-flex;flex-direction:column;gap:12px;vertical-align:top;margin-top:8px">
+          <div class="uml-class">
+            <div class="uml-header">Chien</div>
+            <div class="uml-section">
+              <div class="uml-item priv">− race : String</div>
+            </div>
+            <div class="uml-section">
+              <div class="uml-item pub">+ Chien(nom, age, race)</div>
+              <div class="uml-item pub">+ parler() : String</div>
+              <div class="uml-item pub">+ rapporter() : void</div>
+            </div>
+          </div>
+          <div class="uml-class">
+            <div class="uml-header">Chat</div>
+            <div class="uml-section">
+              <div class="uml-item priv">− indoor : boolean</div>
+            </div>
+            <div class="uml-section">
+              <div class="uml-item pub">+ Chat(nom, age, indoor)</div>
+              <div class="uml-item pub">+ parler() : String</div>
+              <div class="uml-item pub">+ ronronner() : void</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="ex-q4">
+      <div class="code-wrap">
+        <span class="code-lang">JAVA</span>
+        <button class="copy-btn" onclick="copyCode(this)">COPIER</button>
+        <pre><code><span class="cm">// ── Classe mère abstraite ─────────────────────────────────────</span>
+<span class="kw">public abstract class</span> <span class="ty">Animal</span> {
+
+    <span class="kw">private</span> <span class="ty">String</span> nom;
+    <span class="kw">private</span> <span class="ty">int</span>    age;
+
+    <span class="kw">public</span> <span class="mt">Animal</span>(<span class="ty">String</span> nom, <span class="ty">int</span> age) {
+        <span class="kw">this</span>.nom = nom;
+        <span class="kw">this</span>.age = age;
+    }
+
+    <span class="kw">public void</span> <span class="mt">manger</span>() {
+        <span class="ty">System</span>.out.<span class="mt">println</span>(nom + <span class="st">" est en train de manger."</span>);
+    }
+
+    <span class="kw">public abstract</span> <span class="ty">String</span> <span class="mt">parler</span>(); <span class="cm">// défini dans Q5</span>
+
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">getNom</span>() { <span class="kw">return</span> nom; }
+    <span class="kw">public</span> <span class="ty">int</span>    <span class="mt">getAge</span>() { <span class="kw">return</span> age; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">toString</span>() {
+        <span class="kw">return</span> <span class="st">"Animal{"</span> + nom + <span class="st">", age="</span> + age + <span class="st">"}"</span>;
+    }
+}
+
+<span class="cm">// ── Classe fille Chien ────────────────────────────────────────</span>
+<span class="kw">public class</span> <span class="ty">Chien</span> <span class="kw">extends</span> <span class="ty">Animal</span> {
+
+    <span class="kw">private</span> <span class="ty">String</span> race;
+
+    <span class="kw">public</span> <span class="mt">Chien</span>(<span class="ty">String</span> nom, <span class="ty">int</span> age, <span class="ty">String</span> race) {
+        <span class="kw">super</span>(nom, age); <span class="cm">// appel constructeur Animal</span>
+        <span class="kw">this</span>.race = race;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">parler</span>() { <span class="kw">return</span> <span class="mt">getNom</span>() + <span class="st">" dit : Wouf !"</span>; }
+
+    <span class="kw">public void</span> <span class="mt">rapporter</span>() {
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="mt">getNom</span>() + <span class="st">" rapporte la balle !"</span>);
+    }
+}
+
+<span class="cm">// ── Classe fille Chat ─────────────────────────────────────────</span>
+<span class="kw">public class</span> <span class="ty">Chat</span> <span class="kw">extends</span> <span class="ty">Animal</span> {
+
+    <span class="kw">private boolean</span> indoor;
+
+    <span class="kw">public</span> <span class="mt">Chat</span>(<span class="ty">String</span> nom, <span class="ty">int</span> age, <span class="ty">boolean</span> indoor) {
+        <span class="kw">super</span>(nom, age);
+        <span class="kw">this</span>.indoor = indoor;
+    }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">parler</span>() { <span class="kw">return</span> <span class="mt">getNom</span>() + <span class="st">" dit : Miaou..."</span>; }
+
+    <span class="kw">public void</span> <span class="mt">ronronner</span>() {
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="mt">getNom</span>() + <span class="st">" ronronne paisiblement."</span>);
+    }
+}
+
+<span class="cm">// ── main ──────────────────────────────────────────────────────</span>
+<span class="ty">Chien</span> rex  = <span class="kw">new</span> <span class="ty">Chien</span>(<span class="st">"Rex"</span>,  <span class="nm">3</span>, <span class="st">"Berger Allemand"</span>);
+<span class="ty">Chat</span>  luna = <span class="kw">new</span> <span class="ty">Chat</span>(<span class="st">"Luna"</span>, <span class="nm">5</span>, <span class="kw">true</span>);
+
+rex.<span class="mt">manger</span>();       <span class="cm">// hérité de Animal</span>
+rex.<span class="mt">rapporter</span>();    <span class="cm">// méthode spécifique</span>
+luna.<span class="mt">ronronner</span>();  <span class="cm">// méthode spécifique</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q5 -->
+<div class="question-card" id="q5">
+  <div class="q-header" onclick="toggleQ(this)">
+    <span class="q-num">Q5</span>
+    <span class="q-title">Polymorphisme et classes abstraites</span>
+    <span class="q-toggle">+</span>
+  </div>
+  <div class="q-body open">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'doc-q5')">Documentation</button>
+      <button class="tab-btn" onclick="switchTab(this,'ex-q5')">Exemple</button>
+    </div>
+
+    <div class="tab-pane active" id="doc-q5">
+      <div class="prose">
+        <h3>Polymorphisme</h3>
+        <p>Du grec <em>"plusieurs formes"</em>, le polymorphisme permet de manipuler des objets de types différents via une référence commune. En Java, deux formes principales :</p>
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="label">Sous-typage (runtime)</div>
+            <div class="value">Via héritage ou interface. La méthode appelée est choisie dynamiquement selon le type réel de l'objet (dispatch dynamique).</div>
+          </div>
+          <div class="info-item">
+            <div class="label">Surcharge (compile-time)</div>
+            <div class="value">Plusieurs méthodes de même nom avec des signatures différentes dans la même classe.</div>
+          </div>
+        </div>
+
+        <table>
+          <thead><tr><th>Aspect</th><th>Classe abstraite</th><th>Interface</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Mot-clé</strong></td><td><code style="color:var(--keyword);font-family:'Space Mono',monospace">abstract class</code></td><td><code style="color:var(--keyword);font-family:'Space Mono',monospace">interface</code></td></tr>
+            <tr><td><strong>Héritage</strong></td><td>extends (une seule)</td><td>implements (plusieurs)</td></tr>
+            <tr><td><strong>État</strong></td><td>Peut avoir des attributs</td><td>Constantes uniquement</td></tr>
+            <tr><td><strong>Constructeur</strong></td><td>Oui</td><td>Non</td></tr>
+            <tr><td><strong>Méthodes</strong></td><td>Abstraites + concrètes</td><td>Abstraites + default (Java 8+)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="ex-q5">
+      <div class="code-wrap">
+        <span class="code-lang">JAVA</span>
+        <button class="copy-btn" onclick="copyCode(this)">COPIER</button>
+        <pre><code><span class="kw">import</span> java.util.*;
+
+<span class="cm">// parler() est déjà @Override dans Chien et Chat (voir Q4)</span>
+
+<span class="kw">public class</span> <span class="ty">Main</span> {
+    <span class="kw">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+
+        <span class="cm">// Liste de type Animal → polymorphisme de sous-typage</span>
+        <span class="ty">List</span>&lt;<span class="ty">Animal</span>&gt; animaux = <span class="kw">new</span> <span class="ty">ArrayList</span>&lt;&gt;();
+        animaux.<span class="mt">add</span>(<span class="kw">new</span> <span class="ty">Chien</span>(<span class="st">"Rex"</span>,   <span class="nm">3</span>, <span class="st">"Labrador"</span>));
+        animaux.<span class="mt">add</span>(<span class="kw">new</span> <span class="ty">Chat</span>(<span class="st">"Luna"</span>,  <span class="nm">5</span>, <span class="kw">true</span>));
+        animaux.<span class="mt">add</span>(<span class="kw">new</span> <span class="ty">Chien</span>(<span class="st">"Buddy"</span>, <span class="nm">2</span>, <span class="st">"Golden Retriever"</span>));
+        animaux.<span class="mt">add</span>(<span class="kw">new</span> <span class="ty">Chat</span>(<span class="st">"Milo"</span>,  <span class="nm">1</span>, <span class="kw">false</span>));
+
+        <span class="cm">// Dispatch dynamique : parler() résolu au runtime</span>
+        <span class="kw">for</span> (<span class="ty">Animal</span> a : animaux) {
+            <span class="ty">System</span>.out.<span class="mt">println</span>(a.<span class="mt">parler</span>());
+        }
+    }
+}
+
+<span class="cm">/* Sortie :
+   Rex dit : Wouf !
+   Luna dit : Miaou...
+   Buddy dit : Wouf !
+   Milo dit : Miaou...
+*/</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PARTIE III ===== -->
+<div class="part-header" id="part3">
+  <span class="part-num">PARTIE III</span>
+  <div class="part-line"></div>
+  <h2 class="part-title">Interfaces &amp; Abstraction</h2>
+</div>
+
+<!-- Q6 -->
+<div class="question-card" id="q6">
+  <div class="q-header" onclick="toggleQ(this)">
+    <span class="q-num">Q6</span>
+    <span class="q-title">Interfaces</span>
+    <span class="q-toggle">+</span>
+  </div>
+  <div class="q-body open">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'doc-q6')">Documentation</button>
+      <button class="tab-btn" onclick="switchTab(this,'ex-q6')">Exemple</button>
+    </div>
+
+    <div class="tab-pane active" id="doc-q6">
+      <div class="prose">
+        <div class="definition-box">
+          <p>Une <strong>interface</strong> est un contrat que les classes s'engagent à respecter. Elle définit un ensemble de méthodes (sans implémentation, sauf <code style="color:var(--keyword);font-family:'Space Mono',monospace">default</code>) que toute classe implémentante doit fournir.</p>
+        </div>
+
+        <h3>Apports de Java 8+ : méthodes <code style="color:var(--keyword);font-family:'Space Mono',monospace">default</code></h3>
+        <p>Depuis Java 8, une interface peut contenir des méthodes <strong>default</strong> avec une implémentation concrète. Cela permet d'ajouter des fonctionnalités sans casser les classes existantes (compatibilité ascendante). Les méthodes <strong>static</strong> sont également autorisées dans les interfaces.</p>
+
+        <div class="chips">
+          <span class="chip">interface</span>
+          <span class="chip">implements</span>
+          <span class="chip">default</span>
+          <span class="chip">static</span>
+          <span class="chip">héritage multiple</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="ex-q6">
+      <div class="code-wrap">
+        <span class="code-lang">JAVA</span>
+        <button class="copy-btn" onclick="copyCode(this)">COPIER</button>
+        <pre><code><span class="cm">// ── Interface métier ─────────────────────────────────────────</span>
+<span class="kw">public interface</span> <span class="ty">Comparable</span> {
+
+    <span class="cm">/** Retourne une valeur numérique permettant de comparer */</span>
+    <span class="ty">double</span> <span class="mt">valeurComparable</span>();
+
+    <span class="cm">/** Méthode default : compare this à autre */</span>
+    <span class="kw">default boolean</span> <span class="mt">estPlusCherQue</span>(<span class="ty">Comparable</span> autre) {
+        <span class="kw">return</span> <span class="kw">this</span>.<span class="mt">valeurComparable</span>() &gt; autre.<span class="mt">valeurComparable</span>();
+    }
+}
+
+<span class="cm">// ── Classe 1 implémentante : Livre ────────────────────────────</span>
+<span class="kw">public class</span> <span class="ty">Livre</span> <span class="kw">implements</span> <span class="ty">Comparable</span> {
+    <span class="kw">private</span> <span class="ty">String</span> titre;
+    <span class="kw">private</span> <span class="ty">double</span> prix;
+
+    <span class="kw">public</span> <span class="mt">Livre</span>(<span class="ty">String</span> t, <span class="ty">double</span> p) { titre = t; prix = p; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public double</span> <span class="mt">valeurComparable</span>() { <span class="kw">return</span> prix; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">toString</span>() { <span class="kw">return</span> <span class="st">"Livre("</span> + titre + <span class="st">" | "</span> + prix + <span class="st">"€)"</span>; }
+}
+
+<span class="cm">// ── Classe 2 implémentante : Film ─────────────────────────────</span>
+<span class="kw">public class</span> <span class="ty">Film</span> <span class="kw">implements</span> <span class="ty">Comparable</span> {
+    <span class="kw">private</span> <span class="ty">String</span> titre;
+    <span class="kw">private</span> <span class="ty">double</span> note; <span class="cm">// sur 10</span>
+
+    <span class="kw">public</span> <span class="mt">Film</span>(<span class="ty">String</span> t, <span class="ty">double</span> n) { titre = t; note = n; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public double</span> <span class="mt">valeurComparable</span>() { <span class="kw">return</span> note; }
+
+    <span class="an">@Override</span>
+    <span class="kw">public</span> <span class="ty">String</span> <span class="mt">toString</span>() { <span class="kw">return</span> <span class="st">"Film("</span> + titre + <span class="st">" | ★"</span> + note + <span class="st">")"</span>; }
+}
+
+<span class="cm">// ── main ──────────────────────────────────────────────────────</span>
+<span class="ty">Comparable</span> l = <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"Dune"</span>, <span class="nm">14.90</span>);
+<span class="ty">Comparable</span> f = <span class="kw">new</span> <span class="ty">Film</span>(<span class="st">"Inception"</span>, <span class="nm">8.7</span>);
+
+<span class="ty">System</span>.out.<span class="mt">println</span>(l.<span class="mt">estPlusCherQue</span>(f)); <span class="cm">// true (14.9 > 8.7)</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Q7 -->
+<div class="question-card" id="q7">
+  <div class="q-header" onclick="toggleQ(this)">
+    <span class="q-num">Q7</span>
+    <span class="q-title">Interfaces fonctionnelles et lambdas</span>
+    <span class="q-toggle">+</span>
+  </div>
+  <div class="q-body open">
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(this,'doc-q7')">Documentation</button>
+      <button class="tab-btn" onclick="switchTab(this,'ex-q7')">Exemple</button>
+    </div>
+
+    <div class="tab-pane active" id="doc-q7">
+      <div class="prose">
+        <div class="definition-box">
+          <p>Une <strong>interface fonctionnelle</strong> est une interface possédant exactement <strong>une seule méthode abstraite</strong>. L'annotation <code style="color:var(--annotation);font-family:'Space Mono',monospace">@FunctionalInterface</code> vérifie cette contrainte à la compilation.</p>
+        </div>
+
+        <h3>Interfaces fonctionnelles courantes (java.util.function)</h3>
+        <table>
+          <thead><tr><th>Interface</th><th>Signature abstraite</th><th>Usage typique</th></tr></thead>
+          <tbody>
+            <tr><td><code style="color:var(--type);font-family:'Space Mono',monospace">Predicate&lt;T&gt;</code></td><td><code style="font-family:'Space Mono',monospace">boolean test(T t)</code></td><td>Filtrer des éléments</td></tr>
+            <tr><td><code style="color:var(--type);font-family:'Space Mono',monospace">Function&lt;T,R&gt;</code></td><td><code style="font-family:'Space Mono',monospace">R apply(T t)</code></td><td>Transformer un élément</td></tr>
+            <tr><td><code style="color:var(--type);font-family:'Space Mono',monospace">Comparator&lt;T&gt;</code></td><td><code style="font-family:'Space Mono',monospace">int compare(T o1, T o2)</code></td><td>Trier une collection</td></tr>
+            <tr><td><code style="color:var(--type);font-family:'Space Mono',monospace">Consumer&lt;T&gt;</code></td><td><code style="font-family:'Space Mono',monospace">void accept(T t)</code></td><td>Consommer sans retour</td></tr>
+            <tr><td><code style="color:var(--type);font-family:'Space Mono',monospace">Supplier&lt;T&gt;</code></td><td><code style="font-family:'Space Mono',monospace">T get()</code></td><td>Fournir une valeur</td></tr>
+          </tbody>
+        </table>
+
+        <h3>Syntaxe lambda</h3>
+        <p>Une lambda <code style="color:var(--string);font-family:'Space Mono',monospace">(params) -&gt; corps</code> est une syntaxe compacte pour implémenter une interface fonctionnelle, sans créer de classe anonyme explicite. Elle améliore grandement la lisibilité du code fonctionnel.</p>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="ex-q7">
+      <div class="code-wrap">
+        <span class="code-lang">JAVA</span>
+        <button class="copy-btn" onclick="copyCode(this)">COPIER</button>
+        <pre><code><span class="kw">import</span> java.util.*;
+<span class="kw">import</span> java.util.function.*;
+<span class="kw">import</span> java.util.stream.*;
+
+<span class="kw">public class</span> <span class="ty">BiblioDemo</span> {
+    <span class="kw">public static void</span> <span class="mt">main</span>(<span class="ty">String</span>[] args) {
+
+        <span class="ty">List</span>&lt;<span class="ty">Livre</span>&gt; livres = <span class="ty">List</span>.<span class="mt">of</span>(
+            <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"Dune"</span>,               <span class="nm">14.90</span>),
+            <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"L'Étranger"</span>,         <span class="nm">8.50</span>),
+            <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"Le Petit Prince"</span>,     <span class="nm">6.00</span>),
+            <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"1984"</span>,               <span class="nm">9.99</span>),
+            <span class="kw">new</span> <span class="ty">Livre</span>(<span class="st">"Fondation"</span>,          <span class="nm">12.50</span>)
+        );
+
+        <span class="cm">// ── 1. Tri par prix croissant (Comparator + lambda) ───</span>
+        <span class="ty">List</span>&lt;<span class="ty">Livre</span>&gt; tries = livres.<span class="mt">stream</span>()
+            .<span class="mt">sorted</span>(<span class="ty">Comparator</span>.<span class="mt">comparing</span>(<span class="ty">Livre</span>::<span class="mt">getPrix</span>))
+            .<span class="mt">collect</span>(<span class="ty">Collectors</span>.<span class="mt">toList</span>());
+
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"=== Triés par prix ==="</span>);
+        tries.<span class="mt">forEach</span>(l -&gt; <span class="ty">System</span>.out.<span class="mt">println</span>(l));
+
+        <span class="cm">// ── 2. Filtrage : livres > 9€ (Predicate + lambda) ───</span>
+        <span class="ty">Predicate</span>&lt;<span class="ty">Livre</span>&gt; cher = l -&gt; l.<span class="mt">getPrix</span>() &gt; <span class="nm">9.0</span>;
+
+        <span class="ty">List</span>&lt;<span class="ty">Livre</span>&gt; chers = livres.<span class="mt">stream</span>()
+            .<span class="mt">filter</span>(cher)
+            .<span class="mt">collect</span>(<span class="ty">Collectors</span>.<span class="mt">toList</span>());
+
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"\n=== Livres > 9€ ==="</span>);
+        chers.<span class="mt">forEach</span>(<span class="ty">System</span>.out::println);
+
+        <span class="cm">// ── 3. Function : extraire les titres ────────────────</span>
+        <span class="ty">Function</span>&lt;<span class="ty">Livre</span>, <span class="ty">String</span>&gt; toTitre = <span class="ty">Livre</span>::<span class="mt">getTitre</span>;
+
+        <span class="ty">List</span>&lt;<span class="ty">String</span>&gt; titres = livres.<span class="mt">stream</span>()
+            .<span class="mt">map</span>(toTitre)
+            .<span class="mt">collect</span>(<span class="ty">Collectors</span>.<span class="mt">toList</span>());
+
+        <span class="ty">System</span>.out.<span class="mt">println</span>(<span class="st">"\n=== Titres ==="</span>);
+        <span class="ty">System</span>.out.<span class="mt">println</span>(titres);
+    }
+}
+
+<span class="cm">/* Sortie (ordre prix croissant) :
+   Livre(Le Petit Prince | 6.0€)
+   Livre(L'Étranger | 8.5€)
+   Livre(1984 | 9.99€)
+   Livre(Fondation | 12.5€)
+   Livre(Dune | 14.9€)
+
+   Livres > 9€ :
+   Livre(Dune | 14.9€)
+   Livre(1984 | 9.99€)
+   Livre(Fondation | 12.5€)
+*/</span></code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p>POO Java · Devoir Libre · Année 2024–2025</p>
+  <p>7 questions · Encapsulation · Héritage · Polymorphisme · Interfaces</p>
+</footer>
+
+<script>
+  function toggleQ(header) {
+    const body = header.nextElementSibling;
+    const toggle = header.querySelector('.q-toggle');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    toggle.classList.toggle('open', !isOpen);
+    toggle.textContent = isOpen ? '+' : '×';
+  }
+
+  function switchTab(btn, paneId) {
+    const card = btn.closest('.question-card') || btn.closest('.q-body');
+    const body = btn.closest('.q-body');
+    body.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    body.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    body.querySelector('#' + paneId).classList.add('active');
+  }
+
+  function copyCode(btn) {
+    const pre = btn.parentElement.querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'COPIÉ ✓';
+      btn.style.color = 'var(--method)';
+      setTimeout(() => { btn.textContent = orig; btn.style.color = ''; }, 1800);
+    });
+  }
+
+  // Animate cards on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.05 });
+
+  document.querySelectorAll('.question-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(24px)';
+    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+    observer.observe(card);
+  });
 </script>
+</body>
 </html>
